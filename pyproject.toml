@@ -23,7 +23,7 @@ line-length = 100
 
 [tool.isort]
 profile = "black"
-line-length = 100
+line_length = 100
 skip_gitignore = true
 
 # https://blog.wolt.com/engineering/2021/09/30/professional-grade-mypy-configuration/
