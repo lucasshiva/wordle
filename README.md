@@ -34,7 +34,7 @@ This project was based on [Termo](https://term.ooo), a Brazilian Portuguese vers
 
 
 ## Install
-1. Download and install [Poetry]() in your machine.
+1. Download and install [Poetry](https://python-poetry.org/) in your machine.
 2. Clone this repository: `git clone https://github.com/lucasshiva/wordle`
 3. Move into the cloned folder: `cd wordle`
 4. Install this project with Poetry: `poetry install`
