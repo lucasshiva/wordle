@@ -38,5 +38,8 @@ This project was based on [Termo](https://term.ooo), a Brazilian Portuguese vers
 2. Clone this repository: `git clone https://github.com/lucasshiva/wordle`
 3. Move into the cloned folder: `cd wordle`
 4. Install this project with Poetry: `poetry install`
-5. Run `wordle` on your terminal. Optionally, run `wordle --help` first for a full list of options.
+5. Activate the virtual environment: `poetry shell`.
+6. Run `wordle` on your terminal. Optionally, run `wordle --help` first for a full list of options.
+
+**Note:** The `wordle` command only exists inside the virtual environment. You need to run `poetry shell` everytime you wish to use it.
 
