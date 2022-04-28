@@ -36,25 +36,34 @@ def main() -> None:
         default=False,
         help="Activates debug mode. This shows the secret word in the title of each board.",
     )
+    parser.add_argument(
+        "-a",
+        "--align",
+        action="store",
+        type=str,
+        choices=["left", "center", "right"],
+        default="center",
+        help="Where to align the boards on the screen.",
+    )
     args = parser.parse_args()
 
     # Both have default values, so we're fine doing this.
     start_wordle(mode_name=args.mode, debug=args.debug)
 
 
-def start_wordle(mode_name: str, debug: bool) -> None:
-    mode = Mode.from_name(mode_name)
+def start_wordle() -> None:
+    mode = Mode.from_name(args.mode)
     words = get_words("wordle/data/words.txt")
     secrets = get_secrets(words, amount=mode.puzzles_amount)
     puzzles = [Wordle(s, mode=mode) for s in secrets]
 
-    print_empty_board(puzzles, debug=debug)
+    print_empty_board(puzzles)
     counter = 1
     while counter <= mode.max_guesses:
         try:
             word = console.input("\n[bold]Type a word: [/]").upper()
             if word not in words:
-                console.print(f"\nThe word {word} is invalid.", style="red")
+                console.print(f"The word {word} is invalid.", style="red")
                 continue
         except KeyboardInterrupt:
             sys.exit()
@@ -67,10 +76,10 @@ def start_wordle(mode_name: str, debug: bool) -> None:
                 except ValueError as e:
                     console.print(e, style="red")
                     continue
-                panels.append(get_panel(puzzle, debug=debug))
+                panels.append(get_panel(puzzle))
 
             # Update the boards
-            console.print(Columns(panels), justify="center")
+            console.print(Columns(panels), justify=args.align)
 
             # Only check if the user won after updating the board.
             if all([p.is_solved for p in puzzles]):
@@ -88,7 +97,7 @@ def start_wordle(mode_name: str, debug: bool) -> None:
 
 
 # TODO: Find a way to merge this with `get_panel`.
-def print_empty_board(puzzles: List[Wordle], debug: bool = False, char: str = "*") -> None:
+def print_empty_board(puzzles: List[Wordle], char: str = "*") -> None:
     """Print an empty board.
 
     Args:
@@ -101,7 +110,7 @@ def print_empty_board(puzzles: List[Wordle], debug: bool = False, char: str = "*
     panels: List[Panel] = []
     for puzzle in puzzles:
         # Add secret to the top of the panel if debug is set to True.
-        panel_title = f"[bold blue]{puzzle.secret}[/]" if debug else None
+        panel_title = f"[bold blue]{puzzle.secret}[/]" if args.debug else None
         panel_content = ""
         for _ in range(puzzle.mode.max_guesses):
             stars_line = f" {char} " * puzzle.WORD_LENGTH + "\n"
@@ -109,20 +118,19 @@ def print_empty_board(puzzles: List[Wordle], debug: bool = False, char: str = "*
 
         panels.append(Panel(panel_content.rstrip(), title=panel_title))
 
-    console.print(Columns(panels), justify="center")
+    console.print(Columns(panels), justify=args.align)
 
 
-def get_panel(wordle: Wordle, debug: bool = False) -> Panel:
+def get_panel(wordle: Wordle) -> Panel:
     """Create a `Panel` for the current wordle.
 
     Args:
         wordle: The `Wordle` object.
-        debug: Whether to show (True) the secret word or not (False).
 
     Returns:
         A `Panel` containing all the guesses and remaining attempts for the `Wordle` object.
     """
-    panel_title = f"[bold blue]{wordle.secret}[/]" if debug else None
+    panel_title = f"[bold blue]{wordle.secret}[/]" if args.debug else None
     panel_content = ""
     for guess in wordle.guesses:
         colored_line = get_colored_string(guess) + "\n"
@@ -191,5 +199,31 @@ def get_secrets(words: Union[set[str], List[str]], amount: int = 1) -> List[str]
     return secrets
 
 
-if __name__ == "__main__":
-    main()
+parser = ArgumentParser()
+parser.add_argument(
+    "-m",
+    "--mode",
+    action="store",
+    type=str,
+    choices=["solo", "duo", "quad"],
+    default="solo",
+    help="The desired game mode.",
+)
+parser.add_argument(
+    "-d",
+    "--debug",
+    action="store_true",
+    default=False,
+    help="Activates debug mode. This shows the secret word in the title of each board.",
+)
+parser.add_argument(
+    "-a",
+    "--align",
+    action="store",
+    type=str,
+    choices=["left", "center", "right"],
+    default="center",
+    help="Where to align the boards on the screen.",
+)
+args = parser.parse_args()
+start_wordle()
