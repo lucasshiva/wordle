@@ -22,6 +22,7 @@ console = Console()
 def start_wordle() -> None:
     mode = Mode.from_name(args.mode)
     words = get_words("wordle/data/words.txt")
+    dict_words = get_words("wordle/data/dictionary.txt")
     secrets = get_secrets(words, amount=mode.puzzles_amount)
     puzzles = [Wordle(s, mode=mode) for s in secrets]
 
@@ -30,7 +31,7 @@ def start_wordle() -> None:
     while counter <= mode.max_guesses:
         try:
             word = console.input("\n[bold]Type a word: [/]").upper()
-            if word not in words:
+            if word not in dict_words:
                 console.print(f"The word {word} is invalid.", style="red")
                 continue
         except KeyboardInterrupt:
