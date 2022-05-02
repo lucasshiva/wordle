@@ -5,14 +5,13 @@ description = "Play Wordle directly from your terminal."
 authors = ["Lucas Cavalcante da Silva <silva.lucasdev@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7"
 rich = "^12.3.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
 black = "^22.3.0"
 mypy = "^0.942"
-ward = "^0.66.0-beta.0"
 isort = "^5.10.1"
 
 [tool.poetry.scripts]
