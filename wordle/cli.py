@@ -2,7 +2,7 @@ import random
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import List, Union
+from typing import List, Set, Union
 
 from rich.columns import Columns
 from rich.console import Console
@@ -16,39 +16,7 @@ console = Console()
 
 
 # TODO: Create a `Puzzle` class to chain operations requiring Columns, Panels, and Puzzles.
-
-
-def main() -> None:
-    parser = ArgumentParser()
-    parser.add_argument(
-        "-m",
-        "--mode",
-        action="store",
-        type=str,
-        choices=["solo", "duo", "quad"],
-        default="solo",
-        help="The desired game mode.",
-    )
-    parser.add_argument(
-        "-d",
-        "--debug",
-        action="store_true",
-        default=False,
-        help="Activates debug mode. This shows the secret word in the title of each board.",
-    )
-    parser.add_argument(
-        "-a",
-        "--align",
-        action="store",
-        type=str,
-        choices=["left", "center", "right"],
-        default="center",
-        help="Where to align the boards on the screen.",
-    )
-    args = parser.parse_args()
-
-    # Both have default values, so we're fine doing this.
-    start_wordle(mode_name=args.mode, debug=args.debug)
+# TODO: Use `click` instead of `argparse`.
 
 
 def start_wordle() -> None:
@@ -160,7 +128,7 @@ def get_colored_string(guess: Guess) -> str:
     return colored
 
 
-def get_words(path: Union[str, Path]) -> set[str]:
+def get_words(path: Union[str, Path]) -> Set[str]:
     """Fetch words from a text file.
 
     Each line is read as a whole word and words are transformed into uppercase.
@@ -173,7 +141,7 @@ def get_words(path: Union[str, Path]) -> set[str]:
     return words
 
 
-def get_secrets(words: Union[set[str], List[str]], amount: int = 1) -> List[str]:
+def get_secrets(words: Union[Set[str], List[str]], amount: int = 1) -> List[str]:
     """Get an amount of unique strings from a list or a set.
 
     Args:
@@ -226,4 +194,6 @@ parser.add_argument(
     help="Where to align the boards on the screen.",
 )
 args = parser.parse_args()
-start_wordle()
+
+if __name__ == "__main__":
+    start_wordle()
