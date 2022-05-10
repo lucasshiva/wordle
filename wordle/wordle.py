@@ -2,8 +2,12 @@ from dataclasses import dataclass, field
 from typing import List
 
 from wordle.modes import Mode
+from wordle.locale import Locale
+from wordle.exceptions import GuessLengthError, GuessNotFoundError
+
 
 Guess = List["Letter"]
+WORD_LENGTH = 5
 
 
 @dataclass
@@ -26,12 +30,10 @@ class Letter:
 
 
 class Wordle:
-
-    WORD_LENGTH = 5
-
-    def __init__(self, secret: str, mode: Mode = Mode.from_name("solo")) -> None:
+    def __init__(self, secret: str, mode: Mode, locale: Locale) -> None:
         self.secret = secret.upper()  # Ensure the secret is in uppercase.
         self.mode = mode
+        self.locale = locale
 
         # Keep track of all the guesses.
         self.guesses: List[Guess] = []
@@ -45,7 +47,7 @@ class Wordle:
         remaining_secret = list(self.secret)
 
         # Get the greens first.
-        for index in range(self.WORD_LENGTH):
+        for index in range(WORD_LENGTH):
             letter = letters[index]
             if letter.char == remaining_secret[index]:
                 letter.in_position = True
@@ -54,7 +56,7 @@ class Wordle:
                 remaining_secret[index] = "*"
 
         # Now we look for yellows.
-        for index in range(self.WORD_LENGTH):
+        for index in range(WORD_LENGTH):
             letter = letters[index]
             if letter.char in remaining_secret:
                 letter.in_word = True
@@ -75,33 +77,48 @@ class Wordle:
     def guess(self, word: str) -> Guess:
         """Guess a word.
 
+        The word is transformed into uppercase and checked for errors.
+
         Args:
             word: A string to guess.
 
         Returns:
-            An instance of `Guess`.
+            A list of 'Letter' objects.
 
         Raises:
-            ValueError: If the word is not 5 characters long.
-
-        Examples:
-            >>> guess = wordle.guess(word)
-            >>> for letter in guess:
-            >>>     print(letter.in_word)
-            <True>
-            <False>
-            ...
+            GuessLengthError: If the word is not of the expected length.
+            GuessNotFoundError: If the word is not present in the dictionary.
         """
-        # Do nothing if we have already solved this wordle.
-        # This is for duo and quad modes.
+        # Prevent additional guesses if this puzzle is solved.
         if self.is_solved:
             return []
 
-        # NOTE: We could use an original exception for this, but ValueError works just fine.
-        if len(word) != self.WORD_LENGTH:
-            raise ValueError(f"Guesses must have exactly {self.WORD_LENGTH} characters.")
+        # Ensures word is in uppercase.
+        word = word.upper()
 
+        # Check for errors
+        self.validate_guess(word)
+
+        # Save current guess.
         letters = self._compare(word)
         self.attempts.append(word)
         self.guesses.append(letters)
         return letters
+
+    def validate_guess(self, word: str) -> None:
+        """Check if the word is a valid guess.
+
+        Args:
+            word: The word to check
+
+        Raises:
+            GuessLengthError: If the word is not of the expected length.
+            GuessNotFoundError: If the word is not present in the dictionary.
+        """
+        word = word.upper()
+
+        if len(word) != WORD_LENGTH:
+            raise GuessLengthError(f"Guesses must be '{WORD_LENGTH}' characters long.")
+
+        if not self.locale.find(word):
+            raise GuessNotFoundError(f"The word '{word}' is not present in the dictionary.")

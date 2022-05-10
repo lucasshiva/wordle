@@ -1,1 +1,1 @@
-from .wordle import Wordle  # noqa
+from .wordle import Wordle, Guess, WORD_LENGTH  # noqa
