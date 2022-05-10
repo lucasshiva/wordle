@@ -50,6 +50,9 @@ def start_wordle() -> None:
         console.clear()
         panels: List[Panel] = []
         for puzzle in puzzles:
+            # If the user guessed an unaccented word, `word_found` will be its accented version.
+            # Else, `word_found` will be the same as the guess.
+            word = puzzle.locale.word_found
             puzzle.guess(word)
             panels.append(get_panel(puzzle))
 
