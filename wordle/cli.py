@@ -1,22 +1,22 @@
 import sys
 from argparse import ArgumentParser
-from typing import List
+from typing import Dict, List
 
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 
-from wordle import Wordle, WORD_LENGTH, Guess
+from wordle import WORD_LENGTH, Guess, Wordle
+from wordle.exceptions import WordleException
+from wordle.letter import Letter
 from wordle.locale import Locale
 from wordle.modes import Mode
-from wordle.exceptions import WordleException
-
 
 console = Console()
 
 
 # TODO: Create a `Puzzle` class to chain operations requiring Columns, Panels, and Puzzles.
-# TODO: Use `click` instead of `argparse`.
+# TODO: Maybe use `click` instead of `argparse`?.
 
 
 def start_wordle() -> None:
@@ -26,12 +26,13 @@ def start_wordle() -> None:
 
     puzzles = [Wordle(s, mode=mode, locale=locale) for s in secrets]
     print_empty_board(puzzles)
+    draw_keyboard(puzzles)
 
     attempt = 1
     previous_guesses = []
     while attempt <= mode.max_guesses:
         try:
-            word = console.input("\n[bold]Type a word: [/]").upper()
+            word = console.input("[bold]Guess: [/]").upper()
         except KeyboardInterrupt:
             sys.exit()
 
@@ -58,6 +59,7 @@ def start_wordle() -> None:
 
         # Update the boards
         console.print(Columns(panels), justify=args.align)
+        draw_keyboard(puzzles)
 
         # Only check if the user won after updating the board.
         if all([p.is_solved for p in puzzles]):
@@ -138,12 +140,82 @@ def get_colored_string(guess: Guess) -> str:
     colored = ""
 
     for letter in guess:
-        colored += f" [bold {letter.color}]{letter.char}[/] "
+        colored += f" {get_colored_letter(letter)} "
 
     return colored
 
 
+def get_colored_letter(letter: Letter) -> str:
+    """Return a valid `rich` colored string for a letter."""
+    return f"[bold {letter.color}]{letter.char}[/]"
+
+
+def draw_keyboard(puzzles: List[Wordle]) -> None:
+    """Draw a keyboard on the screen."""
+    colored_letters: Dict[str, str] = {}
+
+    # invalid_letters = set()
+    # valid_letters = set()
+    greens = set()
+    yellows = set()
+    reds = set()
+
+    for puzzle in puzzles:
+        if len(puzzle.guesses) == 0:
+            break
+
+        if puzzle.is_solved:
+            continue
+
+        for guess in puzzle.guesses:
+            for letter in guess:
+                if letter.in_position:
+                    colored_letters[letter.char.upper()] = get_colored_letter(letter)
+                    greens.add(letter.char)
+                    continue
+
+                # Only add the yellows if it's not a green.
+                if letter.in_word and letter.char not in colored_letters:
+                    colored_letters[letter.char.upper()] = get_colored_letter(letter)
+                    yellows.add(letter.char)
+                    continue
+
+                reds.add(letter.char)
+
+    # Make sure only white letters stay are marked as invalid.
+    for red in reds.copy():
+        if red in greens or red in yellows:
+            reds.remove(red)
+
+    top_row = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
+    middle_row = ["", "A", "S", "D", "F", "G", "H", "J", "K", "L"]
+    bottom_row = ["", " ", "Z", "X", "C", "V", "B", "N", "M"]
+    rows = [top_row, middle_row, bottom_row]
+
+    panel_content = ""
+    for row in rows:
+        for char in row:
+            if char in reds:
+                panel_content += f" [bold red]{char}[/] "
+            elif char in colored_letters:
+                panel_content += f" {colored_letters[char]} "
+            else:
+                panel_content += f" [bold]{char}[/] "
+
+        panel_content += "\n"
+
+    panel = Panel(panel_content[:-1], title="[bold blue]Keyboard[/]")
+    console.print(Columns([panel]), justify="center")
+
+
 parser = ArgumentParser()
+parser.add_argument(
+    "-d",
+    "--debug",
+    action="store_true",
+    default=False,
+    help="Show the secret word in the title of each puzzle",
+)
 parser.add_argument(
     "-m",
     "--mode",
@@ -151,14 +223,7 @@ parser.add_argument(
     type=str,
     choices=["solo", "duo", "quad"],
     default="solo",
-    help="The desired game mode.",
-)
-parser.add_argument(
-    "-d",
-    "--debug",
-    action="store_true",
-    default=False,
-    help="Activates debug mode. This shows the secret word in the title of each board.",
+    help="The desired game mode (default: 'solo')",
 )
 parser.add_argument(
     "-a",
@@ -167,7 +232,7 @@ parser.add_argument(
     type=str,
     choices=["left", "center", "right"],
     default="center",
-    help="Where to align the boards on the screen.",
+    help="Where to align the puzzles on the screen (default: 'center')",
 )
 parser.add_argument(
     "-l",
@@ -176,7 +241,7 @@ parser.add_argument(
     type=str,
     choices=["en_us", "pt_br"],
     default="en_us",
-    help="Which language to use for the words.",
+    help="Which language to use for words (default: 'en_us')",
 )
 args = parser.parse_args()
 

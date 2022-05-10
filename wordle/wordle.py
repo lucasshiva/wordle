@@ -1,32 +1,12 @@
-from dataclasses import dataclass, field
 from typing import List
 
-from wordle.modes import Mode
-from wordle.locale import Locale
 from wordle.exceptions import GuessLengthError, GuessNotFoundError
-
+from wordle.letter import Letter
+from wordle.locale import Locale
+from wordle.modes import Mode
 
 Guess = List["Letter"]
 WORD_LENGTH = 5
-
-
-@dataclass
-class Letter:
-    """A representation of a letter from a Wordle guess."""
-
-    char: str
-    in_word: bool = field(default=False, init=False)
-    in_position: bool = field(default=False, init=False)
-
-    @property
-    def color(self) -> str:
-        """Return the appropriate color for the letter."""
-        if self.in_position:
-            return "green"
-        elif self.in_word:
-            return "yellow"
-        else:
-            return "gray"
 
 
 class Wordle:

@@ -2,8 +2,8 @@ import json
 import random
 from pathlib import Path
 from typing import Any, Dict, List, Set
-from typing_extensions import Literal
 
+from typing_extensions import Literal
 
 DATA_DIR = Path(__file__).parent.resolve() / "data"
 

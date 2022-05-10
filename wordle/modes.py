@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 default_settings = {
     "solo": {"max_guesses": 6, "puzzles_amount": 1},
     "duo": {"max_guesses": 7, "puzzles_amount": 2},
