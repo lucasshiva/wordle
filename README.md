@@ -8,9 +8,8 @@ This project was based on [Termo](https://term.ooo), a Brazilian Portuguese vers
 - The same words from the original Wordle.
 - Different modes for more fun!
 
-## Screenshots
 
-### Modes
+## Modes
 - **Solo Mode** by setting the `--mode` option to "solo".
 
     ![solo-mode](imgs/solo-mode.png)
@@ -27,7 +26,15 @@ This project was based on [Termo](https://term.ooo), a Brazilian Portuguese vers
 
     ![A solved puzzle in quad mode](imgs/quad-mode-solved.png)
 
-### Debug
+## Locales
+You can change locales by passing a locale to the `-l` option, e.g. `wordle -l pt_br` for Brazilian Portuguese words.
+
+Available locales:
+- en_us - American English (Default)
+- pt_br - Brazilian Portuguese
+
+
+## Debug
 `Wordle` comes with a debug mode, which shows the secret word on the top of each puzzle. To enable debug mode, pass the `-d` flag to `wordle`, e.g., `wordle -d`.
 
 ![Quad Mod with debug turned on](imgs/quad-mode-with-debug.png)
