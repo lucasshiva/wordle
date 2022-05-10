@@ -5,8 +5,10 @@ This project was based on [Termo](https://term.ooo), a Brazilian Portuguese vers
 
 **Features**
 - No limits! Play as much as you want.
-- The same words from the original Wordle.
+- Different languages.
+  - The `en_us` version contains the same words from the original Wordle.
 - Different modes for more fun!
+- A visual keyboard.
 
 
 ## Modes
