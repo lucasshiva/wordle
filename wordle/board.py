@@ -1,8 +1,8 @@
 from typing import List
-from typing_extensions import Literal
 
 from rich.columns import Columns
 from rich.panel import Panel
+from typing_extensions import Literal
 
 from wordle import Wordle
 from wordle.console import console

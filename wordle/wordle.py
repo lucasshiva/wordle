@@ -1,14 +1,13 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 from rich.panel import Panel
 from unidecode import unidecode
 
 from wordle.exceptions import GuessLengthError, GuessNotFoundError
-from wordle.letter import Letter
 from wordle.guess import Guess
+from wordle.letter import Letter
 from wordle.locale import Locale
 from wordle.modes import Mode
-
 
 WORD_LENGTH = 5
 
