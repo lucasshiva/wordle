@@ -149,7 +149,7 @@ class Puzzle:
             panel_content += "\n" * self.remaining_attempts
         else:
             for _ in range(self.remaining_attempts):
-                stars_line = " * " * WORD_LENGTH + "\n"
+                stars_line = " [bold]*[/] " * WORD_LENGTH + "\n"
                 panel_content += stars_line
 
         return Panel(

@@ -16,7 +16,7 @@ mypy = "^0.942"
 isort = "^5.10.1"
 
 [tool.poetry.scripts]
-wordle = "wordle.cli:start_wordle"
+wordle = "wordle.wordle:start_wordle"
 
 [tool.black]
 line-length = 100
