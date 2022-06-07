@@ -39,7 +39,7 @@ Available locales:
 ## Debug
 `Wordle` comes with a debug mode, which shows the secret word on the top of each puzzle. To enable debug mode, pass the `-d` flag to `wordle`, e.g., `wordle -d`.
 
-![Quad Mod with debug turned on](imgs/quad-mode-with-debug.png)
+![Quad Mod with debug turned on](imgs/quad-mode-debug.png)
 
 
 ## Install
