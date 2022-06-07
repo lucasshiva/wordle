@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Optional
 
 from unidecode import unidecode
 
@@ -29,12 +30,15 @@ class Letter:
         else:
             return "white"
 
-    @property
-    def rich_color(self) -> str:
+    def rich_color(self, color: Optional[str] = None) -> str:
         """Return a valid `rich` colored string for the letter.
 
+        Args:
+            color: A string for a custom color, e.g., "red".
+
         Examples:
-            >>> letter = Letter("a", in_word=True).rich_color
+            >>> letter = Letter("a", in_word=True).rich_color()
             '[bold yellow]a[/]'
         """
-        return f"[bold {self.color}]{self.char}[/]"
+        color = color or self.color
+        return f"[bold {color}]{self.char}[/]"

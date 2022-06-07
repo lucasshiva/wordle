@@ -15,5 +15,5 @@ class Guess:
         """Return a valid `rich` string for the current guess."""
         colored = ""
         for letter in self.letters:
-            colored += f" {letter.rich_color} "
+            colored += f" {letter.rich_color()} "
         return colored

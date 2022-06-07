@@ -12,7 +12,7 @@ from wordle.modes import Mode
 WORD_LENGTH = 5
 
 
-class Wordle:
+class Puzzle:
     def __init__(self, id: int, secret: str, mode: Mode, locale: Locale) -> None:
         self.id = id
         self.secret = secret.upper()  # Ensure the secret is in uppercase.
@@ -142,7 +142,7 @@ class Wordle:
             colored_line = guess.as_colored_string() + "\n"
             panel_content += colored_line
 
-        # Don't write the filler lines (and following guesses) for a wordle we've solved.
+        # Don't write the filler lines (and following guesses) for a puzzle we've solved.
         if self.is_solved:
             subtitle = "[bold green]OK[/]"
             border_style = "bold green"
@@ -202,16 +202,16 @@ class Wordle:
             for letter in guess.letters:
                 # Greens first.
                 if letter.in_position:
-                    keys[letter.unaccented_char] = letter.rich_color
+                    keys[letter.unaccented_char] = letter.rich_color()
                     continue
 
                 # Only add the yellows if it's not a green.
                 if letter.in_word and letter.unaccented_char not in keys:
-                    keys[letter.unaccented_char] = letter.rich_color
+                    keys[letter.unaccented_char] = letter.rich_color()
                     continue
 
                 if not letter.in_word:
-                    keys[letter.unaccented_char] = letter.rich_color
+                    keys[letter.unaccented_char] = letter.rich_color(color="red")
                     continue
 
         return keys

@@ -4,7 +4,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 from typing_extensions import Literal
 
-from wordle import Wordle
+from wordle.puzzle import Puzzle
 from wordle.console import console
 from wordle.locale import Locale
 from wordle.modes import Mode
@@ -29,15 +29,15 @@ class Board:
         self.debug = debug
         self.alignment = alignment
 
-        self.puzzles: List[Wordle] = []
+        self.puzzles: List[Puzzle] = []
         self._setup_puzzles()
 
     def _setup_puzzles(self) -> None:
         """Get the secret words and create the puzzles."""
         secrets = self.locale.get_secrets(amount=self.mode.puzzles_amount)
         for num, secret in enumerate(secrets, start=1):
-            wordle = Wordle(id=num, secret=secret, mode=self.mode, locale=self.locale)
-            self.puzzles.append(wordle)
+            puzzle = Puzzle(id=num, secret=secret, mode=self.mode, locale=self.locale)
+            self.puzzles.append(puzzle)
 
     def draw(self) -> None:
         """Print an empty board on the screen."""
